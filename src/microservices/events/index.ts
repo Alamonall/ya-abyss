@@ -17,7 +17,9 @@ async function bootstrap() {
   kafkaClient = new KafkaClient({
     groupId: kafkaConfig.groupId,
     subscribeTopics: kafkaConfig.topics,
-    brokers: kafkaConfig.brokers
+    brokers: kafkaConfig.brokers,
+    requestTimeout: 60000, // 60 секунд
+    connectionTimeout: 10000, // 10 секунд
   })
 
   await kafkaClient.connect()
@@ -64,5 +66,5 @@ app.post('/api/events/payment', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Proxy Movies listening on port ${port}`)
+  console.log(`Events Service listening on port ${port}`)
 })
