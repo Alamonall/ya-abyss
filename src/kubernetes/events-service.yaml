@@ -4,7 +4,7 @@ metadata:
   name: events-service
   namespace: cinemaabyss
   labels:
-    app: events
+    app: events-service
 spec:
   replicas: 1
   selector:
@@ -24,6 +24,24 @@ spec:
         envFrom:
         - configMapRef:
             name: cinemaabyss-config
+        env:
+        - name: PORT
+          value: "8082"
+        readinessProbe:
+          httpGet:
+            path: /api/events/health
+            port: 8082
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/events/health
+            port: 8082
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: dockerconfigjson
 ---
 apiVersion: v1
 kind: Service
@@ -32,7 +50,7 @@ metadata:
   namespace: cinemaabyss
 spec:
   selector:
-    app: events-service
+    app: events
   ports:
   - port: 8082
     targetPort: 8082
