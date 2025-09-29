@@ -33,14 +33,16 @@ bootstrap().catch(console.error)
 // })
 
 app.get('/api/events/health', (req, res) => {
+  console.log({ healthcheck: 'ok'})
   res.send({ status: true })
 })
 
 app.post('/api/events/user', (req, res) => {
   kafkaClient.send(
-    'user-event',
+    'user-events',
     req.body
   )
+  console.log({ event: req.body }, 'user-events')
 
   res.status(201)
   res.send({ status: 'success' })
@@ -48,18 +50,22 @@ app.post('/api/events/user', (req, res) => {
 
 app.post('/api/events/movie', (req, res) => {
   kafkaClient.send(
-    'movie-event',
+    'movie-events',
     req.body
   )
+  console.log({ event: req.body }, 'movie-events')
+
   res.status(201)
   res.send({ status: 'success' })
 })
 
 app.post('/api/events/payment', (req, res) => {
   kafkaClient.send(
-    'payment-event',
+    'payment-events',
     req.body
   )
+
+  console.log({ event: req.body }, 'payment-events')
 
   res.status(201)
   res.send({ status: 'success' })
