@@ -50,7 +50,7 @@ metadata:
   namespace: cinemaabyss
 spec:
   selector:
-    app: proxy
+    app: proxy-service
   ports:
   - port: 8000
     targetPort: 8000

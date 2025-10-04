@@ -39,6 +39,13 @@ spec:
             port: 8082
           initialDelaySeconds: 15
           periodSeconds: 20
+      resources:
+        limits:
+          cpu: 300m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
       restartPolicy: Always
       imagePullSecrets:
         - name: dockerconfigjson
