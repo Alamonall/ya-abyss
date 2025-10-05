@@ -16,20 +16,21 @@ const apiProxy = httpProxy.createProxyServer()
 const targetWeight = moviesMigrationPercent / 100
 
 app.use('/', (req, res) => {
-  if(req.url == '/api/proxy/health') {
-    res.status(200)
-    return;
-  }
+  console.log({ url: req.url, gradualMigration, moviesMigrationPercent });
 
+  if(req.url == '/health') {
+    res.status(200)
+    res.send();
+  }
 
   const random = Math.random()
   if (gradualMigration && random < targetWeight) {
-    console.log({ random, targetWeight, url: req.url, gradualMigration, moviesMigrationPercent }, 'to_microservice')
+    console.log({ random, targetWeight, }, 'to_microservice')
     apiProxy.web(req, res, { target: moviesServiceUrl })
     return;
   }
 
-  console.log({ random, targetWeight, url: req.url, gradualMigration, moviesMigrationPercent }, 'to_monolith')
+  console.log({ random, targetWeight}, 'to_monolith')
   apiProxy.web(req, res, { target: monolithUrl })
 })
 
