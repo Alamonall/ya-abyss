@@ -20,12 +20,16 @@ app.use('/', (req, res) => {
     res.status(200)
     return;
   }
-  const random = Math.random() * 100 - 1
-  console.log({ random, url: req.url })
+
+
+  const random = Math.random()
   if (gradualMigration && random < targetWeight) {
+    console.log({ random, targetWeight, url: req.url, gradualMigration, moviesMigrationPercent }, 'to_microservice')
     apiProxy.web(req, res, { target: moviesServiceUrl })
+    return;
   }
 
+  console.log({ random, targetWeight, url: req.url, gradualMigration, moviesMigrationPercent }, 'to_monolith')
   apiProxy.web(req, res, { target: monolithUrl })
 })
 
