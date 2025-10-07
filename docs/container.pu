@@ -1,0 +1,59 @@
+@startuml
+!include  ./templates/C4_Context.puml
+!include  ./templates/C4_Container.puml
+
+Person(mobile_user, "Смартфон")
+Person(desktop_user, "ПК")
+
+System_Boundary(abyss, "Abyss System") {
+
+  Container(api, "API Gateway")
+
+  Container(content, "Метаданные о контенте", "", "Метаданные, доступный формат и т.д.")
+  ContainerDb(md_db, "Метаданные")
+  Rel(content,md_db, "R/W")
+
+  Container(user, "Работа с пользователями", "", "Авторизация и т.д.")
+  ContainerDb(user_db, "Пользователи")
+  Rel(user,user_db, "R/W")
+
+  Container(payment_processing, "Работа с платежами", "", "Взаимодействие с внешней системой платежей, хранение транзакций и т.д.")
+  ContainerDb(pp_db, "Платежи")
+  Rel(payment_processing,pp_db, "R/W")
+
+  Container(video_processing, "Работа с видеостримингом", "", "Переформатирование для разных платформ, уровня соединения")
+  ContainerDb(video_storage, "Хранение контента", "S3", "Хранение контента принадлежащего KinoAbyss")
+  Rel(video_processing, video_storage, "Стриминг контента, конверт в нужный формат")
+
+  Container(recomends, "Работа с рекоммендациями", "", "Индексирует контент, строит матрицы рекомендаций, хранит просмотры")
+
+  Container(bought, "Работа с подписками, покупками", "", "Хранит подписки, инфу о купленном контенте")
+  ContainerDb(ext_plt_db, "Подписки, купленный контент")
+  Rel(bought,ext_plt_db, "R/W")
+
+  Rel(mobile_user, api, "", "REST")
+  Rel(desktop_user, api, "", "REST")
+
+  Rel(api, user, "", "REST")
+
+  Rel(api, bought, "Проверяет подписки, покупки")
+  Rel(api, recomends, "Получает рекомендации по контенту")
+  ' Rel(recomends, bought, "Получает подписки, проверяет покупку", "via Events")
+  Rel(recomends, content, "Получение информации о контенте", "REST")
+  Rel(api, content, "Получает контент по категориями и прочем нерекомендательным параметрам", "REST")
+  Rel(api, payment_processing, "Оплата подписок, покупок")
+  Rel(api, video_processing,  "Стриминг контента, конверт в нужный формат")
+}
+
+System(ext_payments, "Платежная система")
+' System(ext_recommendations, "Рекомендательная система")
+System(ext_plt_1, "Некая внешняя платформа")
+' System(сdn_1, "Некая внешняя CDN")
+
+Rel(video_processing, ext_plt_1, "Стриминг контента, конверт в нужный формат")
+Rel(content, ext_plt_1,  "Получение информации о новом контенте", "via Events")
+Rel(bought, ext_plt_1,  "Получение информации новых подписках", "via Events")
+Rel(payment_processing, ext_payments,  "Обработка платежей")
+
+
+@enduml

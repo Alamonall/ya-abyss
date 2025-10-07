@@ -20,3 +20,5 @@ data:
   # Strangler Fig configuration
   GRADUAL_MIGRATION: {{ .Values.config.gradualMigration | quote }}
   MOVIES_MIGRATION_PERCENT: {{ .Values.config.moviesMigrationPercent | quote }}
+
+  KAFKA_BROKERS: {{ .Values.config.kafkaBrokers | quote }}
